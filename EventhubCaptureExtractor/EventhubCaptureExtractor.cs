@@ -23,7 +23,6 @@ SOFTWARE.
 */
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Analytics.Interfaces;
 using System.IO;
@@ -48,14 +47,9 @@ namespace EventHubExtractor
             //Creating a memory stream buffer.
             using (var buffer = new MemoryStream())
             {
-                Console.WriteLine("Reading data from file...");
-
-                CreateSeekableStream(input, buffer);
+                input.BaseStream.CopyTo(buffer);
                 buffer.Position = 0;
 
-                Console.WriteLine("Deserializing...");
-
-                //Prepare the stream for deserializing the data
                 buffer.Seek(0, SeekOrigin.Begin);
 
                 using (var reader = AvroContainer.CreateGenericReader(buffer))
@@ -90,11 +84,6 @@ namespace EventHubExtractor
             var body = aEventData[BODY];
             output.Set(BODY, body);
             return output;
-        }
-
-        private void CreateSeekableStream(IUnstructuredReader input, MemoryStream output)
-        {
-            input.BaseStream.CopyTo(output);
         }
     }
 }
