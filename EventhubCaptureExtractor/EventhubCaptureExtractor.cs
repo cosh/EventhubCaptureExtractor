@@ -34,11 +34,6 @@ namespace EventHubExtractor
     [SqlUserDefinedExtractor(AtomicFileProcessing = true)]
     public class EventhubCaptureExtractor : IExtractor
     {
-        private const string OFFSET = "Offset";
-        private const string SystemProperties = "SystemProperties";
-        private const string TIME = "EnqueuedTimeUtc";
-        private const string PROPERTIES = "Properties";
-        private const string SEQUENCENUMBER = "SequenceNumber";
         private const string BODY = "Body";
 
         public override IEnumerable<IRow> Extract(IUnstructuredReader input, IUpdatableRow output)
