@@ -22,36 +22,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Microsoft.Analytics.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using Microsoft.Analytics.Interfaces;
+using Microsoft.Analytics.UnitTest;
+using System.Collections.Generic;
+using EventHubExtractor;
 
-namespace EventhubCaptureExtractorTest
+namespace JsonToolsTest
 {
-    class UnstructuredReaderTest : IUnstructuredReader
+    [TestClass]
+    public class JsonToolsTest
     {
-        private readonly Stream baseStream;
 
-        public UnstructuredReaderTest(Stream stream)
+        [TestMethod]
+        public void ValidJsonFlat()
         {
-            baseStream = stream;
+            var result = JsonTools.ExtractBody("{\"id\":\"file\",\"value\":\"File\"}");
+
+            Assert.AreEqual(2, result.Count);
+        }
+        
+        [TestMethod]
+        public void ValidJsonDeep()
+        {
+            var result = JsonTools.ExtractBody("{\"firstName\":\"John\",\"address\":{\"streetAddress\":\"21 2nd Street\"}}");
+            Assert.AreEqual(2, result.Count);
         }
 
-        public override Stream BaseStream
+        [TestMethod]
+        public void InValidJson()
         {
-            get { return baseStream; }
+            var result = JsonTools.ExtractBody("{\"id\":\"file\" \"value\":\"File\"");
+            Assert.AreEqual(0, result.Count);
         }
 
-        public override long Start => throw new NotImplementedException();
-
-        public override long Length => throw new NotImplementedException();
-
-        public override IEnumerable<Stream> Split(params byte[] rowdelimiter)
+        [TestMethod]
+        public void EmptyString()
         {
-            throw new NotImplementedException();
+            var result = JsonTools.ExtractBody("");
+            Assert.AreEqual(0, result.Count);
+
+            result = JsonTools.ExtractBody(null);
+            Assert.AreEqual(0, result.Count);
         }
     }
 }
